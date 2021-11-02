@@ -72,5 +72,19 @@
     opacity: 0; }
   100% {
     opacity: 1; } }
+/**
+ * Styles for the month controls
+ */
+.month-controls {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-evenly;
+  flex-wrap: wrap; }
+  .month-controls span.month {
+    cursor: pointer;
+    padding: 0.5rem 1rem;
+    margin-bottom: 1rem; }
+    .month-controls span.month.active {
+      font-weight: bold; }
 
 /*# sourceMappingURL=style.css.map */

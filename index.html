@@ -53,6 +53,11 @@
 
             </div>
         </div>
+        <div class="twelve columns">
+            <div id="months">
+
+            </div>
+        </div>
     </div>
     <div class="row">
         <div class="twelve columns">
@@ -68,7 +73,8 @@
         <div class="twelve columns">
             <h3>Progress</h3>
             <p>We now have all the data to implement the visualization from the <a href="update-1.html" target="_blank">concept
-                design</a>. Above visualizations are prepared using d3 to implement the concept from <a href="update-2.html" target="_blank">tablau concepts</a>.</p>
+                design</a>. Above visualizations are prepared using d3 to implement the concept from <a
+                    href="update-2.html" target="_blank">tablau concepts</a>.</p>
         </div>
     </div>
 </div>
@@ -127,6 +133,72 @@
     };
 
     /**
+     * Format the months as Month YYYY
+     **/
+    const formatMonths = d3.timeFormat( '%B %Y' );
+
+    function visualizeTopics( monthly_topics, month, attributes, topics_svg, y_scale ) {
+        // Filter the dataset with current month
+        const current_month_topics = monthly_topics.filter( d => formatMonths( d.month ).toLowerCase().replaceAll( ' ', '-' ) === month );
+        // Group the topics by topic name
+        const grouped_topics = d3.rollup( current_month_topics, v => d3.sum( v, d => d.score ), d => d.topic );
+
+        //Start the visualization
+
+        // X axis
+        // Topics will be displayed on the x-axis
+
+        // Get the unique topics from monthly topics object
+        const topics = [...new Set( current_month_topics.map( e => e.topic ) )];
+
+        const x_domains = topics.sort(d3.ascending);
+
+        // X axis scale
+        const x_scale = d3.scaleBand()
+            .domain( x_domains )
+            .range( [attributes.margin.left + attributes.axis.y, attributes.width - attributes.margin.left - attributes.margin.right] )
+            .padding( 1 );
+
+        const x_axis = d3.axisBottom( x_scale );
+
+        // Add X axis
+        topics_svg.select( 'g.axis.x' )
+            .call( x_axis )
+            .selectAll( 'text' )
+            .attr( 'y', 0 )
+            .attr( 'x', -15 )
+            .attr( 'dy', '.35em' )
+            .attr( 'transform', 'rotate(270)' )
+            .style( 'text-anchor', 'end' );
+
+        // Color Scheme
+        const topic_color = d3.scaleOrdinal()
+            .domain( x_domains )
+            .range( d3.schemeSet3 );
+
+        // Transition
+        const t = topics_svg.transition().duration(750);
+
+        // Add the circles
+        topics_svg.selectAll( '.bubble' )
+            .data( grouped_topics.keys() )
+            .join( 'circle' )
+            .transition(t)
+            .attr( 'class', d => 'bubble bubble-' + d.toLowerCase().replace( /[.\s]+/g, '-' ) )
+            .attr( 'cx', d => x_scale( d ) )
+            .attr( 'cy', d => y_scale( grouped_topics.get(d) ) )
+            .attr( 'r', d => Math.ceil( grouped_topics.get(d) ) )
+            .style( 'fill', d => topic_color( d ) );
+    }
+
+    function visualizeSentiment( user_sentiments, month, attributes, sentiment_svg ) {
+        // Filter the dataset with current month
+        const current_month_sentiments = user_sentiments.filter( d => formatMonths( d.month ).toLowerCase().replaceAll( ' ', '-' ) === month );
+        // Group the topics by topic name
+        const grouped_users = d3.rollup( current_month_sentiments, v => d3.sum( v, d => d.score ), d => d.topic );
+    }
+
+    /**
      * Function to create the visualization
      * @param data array of CSV data elements
      */
@@ -137,7 +209,7 @@
             return {
                 'month': new Date( '01' + d.Month.trim() ),       // Convert string months to date object
                 'topic': d.Topic.trim().replaceAll( "'", '' ),    // Trim empty space and quotes
-                'score': parseFloat( d.Score.trim() )             // Convert to floating point number
+                'score': parseFloat( d.Score.trim() ).toFixed( 4 )  // Convert to floating point number
             }
         } );
 
@@ -174,27 +246,10 @@
             .filter( ( e, index, self ) =>
                 self.findIndex( d => d.getTime() === e.getTime() ) === index );
 
-        // X axis domains
-        const x_domains = d3.extent( dates );
-        // X axis scale
-        const x_scale = d3.scaleTime()
-            .domain( x_domains )
-            .range( [attributes.margin.left + attributes.axis.y, attributes.width - attributes.margin.left - attributes.margin.right] );
+        // Set current month to the first value of the list
+        let month = formatMonths( dates[0] ).toLowerCase().replaceAll( ' ', '-' );
 
-        const x_axis = d3.axisBottom( x_scale )
-            .tickFormat( d3.timeFormat( '%B %Y' ) );
-
-
-        // Get the unique topics from monthly topics object
-        const topics = [...new Set( monthly_topics.map( e => e.topic ) )];
-        // Y axis scale
-        const y_scale = d3.scaleBand()
-            .range( [attributes.margin.top, attributes.height - attributes.margin.top - attributes.margin.bottom - attributes.axis.x] )
-            .domain( topics )
-            .padding( 1 );
-
-        const y_axis = d3.axisLeft( y_scale );
-
+        // Create the SVG
         const topics_svg = d3.select( '#topic-visualization' )
             .append( 'svg' )
             .attr( 'width', attributes.width )
@@ -202,54 +257,83 @@
             .attr( 'viewBox', [0, 0, attributes.width, attributes.height] )
             .attr( 'style', 'max-width: 100%; height: auto; height: intrinsic;' );
 
-        // Add X axis
-        topics_svg.append( 'g' )
+        // Create the x axis
+        const x_axis = topics_svg.append( 'g' )
             .attr( 'class', 'x axis' )
-            .attr( 'transform', 'translate(' + (attributes.margin.left) + ', ' + (attributes.height - attributes.margin.bottom - attributes.axis.x) + ')' )
-            .call( x_axis )
-            .selectAll( 'text' )
-            .attr( 'y', 0 )
-            .attr( 'x', -15 )
-            .attr( 'dy', '.35em' )
-            .attr( 'transform', 'rotate(270)' )
-            .style( 'text-anchor', 'end' );
+            .attr( 'transform', 'translate(' + (attributes.margin.left) + ', ' + (attributes.height - attributes.margin.bottom - attributes.axis.x) + ')' );
 
-        // Add Y axis
+        // Create the y axis
+
+        // Get the extent of the scores from all months
+        const g = d3.rollup( monthly_topics, v => d3.sum( v, d => d.score ), d => d.month, d => d.topic );
+        let scores = [];
+        g.forEach((value, key) => {
+            scores = scores.concat(d3.extent(g.get(key).values()));
+        });
+
+        // The scores will be displayed on the y-axis
+        const y_scale = d3.scaleLinear()
+            .range( [attributes.margin.top, attributes.height - attributes.margin.top - attributes.margin.bottom - attributes.axis.x] )
+            .domain( d3.extent( scores ).reverse() );
+
+        const y_axis = d3.axisLeft( y_scale );
+
+        // We don't need to create the Y-axis for every month.
         topics_svg.append( 'g' )
+            .call(y_axis)
             .attr( 'class', 'y axis' )
             .attr( 'transform', 'translate(' + (attributes.margin.left + attributes.axis.x) + ', ' + attributes.margin.top + ')' )
-            .call( y_axis )
             .selectAll( 'text' )
             .style( 'text-anchor', 'end' );
 
-        // Color Scheme
-        const topic_color = d3.scaleOrdinal()
-            .domain( topics )
-            .range( d3.schemeSet1 );
-
-        // Add the circles
-        topics_svg.append( 'g' )
-            .attr( 'class', 'bubbles' )
-            .selectAll( '.bubble' )
-            .data( monthly_topics )
-            .join( 'circle' )
-            .attr( 'class', d => 'bubble bubble-' + d.topic.toLowerCase().replace( /[.\s]+/g, '-' ) )
-            .attr( 'cx', d => x_scale( d.month ) )
-            .attr( 'cy', d => y_scale( d.topic ) )
-            .attr( 'r', d => Math.ceil( d.score * 5 ) )
-            .style( 'fill', d => topic_color( d.topic ) )
+        visualizeTopics( monthly_topics, month, attributes, topics_svg, y_scale );
 
         // Sentiment placeholder
-        d3.selectAll('#sentiment-visualization')
-            .append('svg')
+        const sentiment_svg = d3.selectAll( '#sentiment-visualization' )
+            .append( 'svg' )
             .attr( 'width', attributes.width )
             .attr( 'height', attributes.height )
             .attr( 'viewBox', [0, 0, attributes.width, attributes.height] )
             .attr( 'style', 'max-width: 100%; height: auto; height: intrinsic;' )
-            .append('text')
-            .text('Coming soon!')
-            .attr('x', attributes.width / 2 - 50)
-            .attr('y', attributes.height / 2 - 10);
+            .append( 'text' )
+            .text( 'Coming soon!' )
+            .attr( 'x', attributes.width / 2 - 50 )
+            .attr( 'y', attributes.height / 2 - 10 );
+
+
+
+        visualizeSentiment(user_sentiments, month, attributes, sentiment_svg);
+
+        // Show the months on the screen
+        d3.select( '#months' )
+            .append( 'div' )
+            .attr( 'class', 'month-controls' )
+            .selectAll( '.month' )
+            .data( dates )
+            .join( 'span' )
+            .attr( 'class', d => 'month ' + formatMonths( d ).toLowerCase().replaceAll( ' ', '-' ) )
+            .attr( 'data-month', d => formatMonths( d ).toLowerCase().replaceAll( ' ', '-' ) )
+            .text( d => formatMonths( d ) );
+
+        // Show the current month as active
+        d3.select( '#months' )
+            .selectAll( '.month' )
+            .classed( 'active', false );
+        d3.selectAll( '.' + month )
+            .classed( 'active', true );
+
+        // Click event
+        d3.select( '#months' )
+            .selectAll( '.month' )
+            .on( 'click', function () {
+                month = d3.select( this ).attr( 'data-month' );
+                d3.selectAll( '.month' )
+                    .classed( 'active', false );
+                d3.selectAll( '.' + month )
+                    .classed( 'active', true );
+                visualizeTopics( monthly_topics, month, attributes, topics_svg, y_scale );
+                visualizeSentiment(user_sentiments, month, attributes, sentiment_svg);
+            } );
     }
 </script>
 </body>
