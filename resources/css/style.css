@@ -87,4 +87,80 @@
     .month-controls span.month.active {
       font-weight: bold; }
 
+/**
+ * Style for control elements
+ */
+.month-range {
+  width: 100%;
+  -webkit-appearance: none;
+  width: calc(100% - (73px));
+  height: 10px;
+  border-radius: 5px;
+  background: #d7dcdf;
+  outline: none;
+  padding: 0;
+  margin: 0; }
+  .month-range::-webkit-slider-thumb {
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #2c3e50;
+    cursor: pointer;
+    transition: background .15s ease-in-out; }
+    .month-range::-webkit-slider-thumb:hover {
+      background: #1abc9c; }
+  .month-range:active::-webkit-slider-thumb {
+    background: #1abc9c; }
+  .month-range::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border: 0;
+    border-radius: 50%;
+    background: #2c3e50;
+    cursor: pointer;
+    transition: background .15s ease-in-out; }
+    .month-range::-moz-range-thumb:hover {
+      background: #1abc9c; }
+  .month-range:active::-moz-range-thumb {
+    background: #1abc9c; }
+  .month-range:focus::-webkit-slider-thumb {
+    box-shadow: 0 0 0 3px #fff, 0 0 0 6px #1abc9c; }
+
+.selected-month {
+  position: relative;
+  display: block;
+  width: 100%; }
+  .selected-month span {
+    position: absolute;
+    display: inline-block;
+    color: #fff;
+    line-height: 20px;
+    text-align: center;
+    border-radius: 3px;
+    background: #2c3e50;
+    padding: 5px 10px;
+    margin-left: 8px;
+    white-space: nowrap;
+    transform: rotate(90deg);
+    transform-origin: left; }
+    .selected-month span:after {
+      position: absolute;
+      top: 8px;
+      left: -7px;
+      width: 0;
+      height: 0;
+      border-top: 7px solid transparent;
+      border-right: 7px solid #2c3e50;
+      border-bottom: 7px solid transparent;
+      content: ''; }
+
+::-moz-range-track {
+  background: #d7dcdf;
+  border: 0; }
+
+input::-moz-focus-inner,
+input::-moz-focus-outer {
+  border: 0; }
+
 /*# sourceMappingURL=style.css.map */

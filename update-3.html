@@ -59,9 +59,6 @@
             <div id="months">
 
             </div>
-            <div id="selected-month" class="selected-month">
-                <span id="selected-month-label"></span>
-            </div>
         </div>
         <div class="twelve columns">
             <div id="sentiment-visualization">
@@ -126,7 +123,6 @@
             </ul>
             <h4>Previous updates</h4>
             <ul>
-                <li><a href="update-2.html" target="_blank">11/02/2021</a></li>
                 <li><a href="update-2.html" target="_blank">10/14/2021</a></li>
                 <li><a href="update-1.html" target="_blank">10/04/2021</a></li>
             </ul>
@@ -140,7 +136,7 @@
                 <small>
                     Information visualization project progress of Ashiqur Rahman.<br/>
                     Email: ashiqur.r@niu.edu<br/>
-                    Last update: 11/11/2021
+                    Last update: 11/02/2021
                 </small>
             </p>
         </div>
@@ -396,7 +392,7 @@
 
         // Show the months on the screen
         {
-            /*d3.select( '#months' )
+            d3.select( '#months' )
                 .append( 'div' )
                 .attr( 'class', 'month-controls' )
                 .selectAll( '.month' )
@@ -404,44 +400,10 @@
                 .join( 'span' )
                 .attr( 'class', d => 'month ' + formatMonths( d ).toLowerCase().replaceAll( ' ', '-' ) )
                 .attr( 'data-month', d => formatMonths( d ).toLowerCase().replaceAll( ' ', '-' ) )
-                .text( d => formatMonths( d ) );*/
-            d3.select( '#months' )
-                .append( 'input' )
-                .attr( 'type', 'range' )
-                .attr( 'min', 0 )
-                .attr( 'max', dates.length - 1 )
-                .attr( 'value', 0 )
-                .attr( 'step', 1 )
-                .attr( 'id', 'month-range' )
-                .attr( 'class', 'month-range' );
-
-            d3.select( '#selected-month-label' )
-                .text( formatMonths( dates[0] ) );
-
-            d3.select( 'input#month-range' )
-                .on( 'change', function () {
-                    const selected_value = this.value;
-                    const min = this.min ? this.min : 0;
-                    const max = this.max ? this.max : dates.length - 1;
-                    const new_value = Number(((selected_value - min) * 100) / (max - min));
-
-                    const current_month = dates[selected_value];
-                    d3.select( '#selected-month-label' )
-                        .text( formatMonths( current_month ) )
-                        .style('left', `calc(${new_value}%)`);
-
-
-                    // Sorta magic numbers based on size of the native UI thumb
-                    //bubble.style.left = `calc(${newVal}% + (${8 - newVal * 0.15}px))`;
-
-                    // Update the visualization
-                    month = formatMonths( current_month ).toLowerCase().replaceAll( ' ', '-' );
-                    visualizeTopics( monthly_topics, month, attributes, topics_svg, y_scale );
-                    visualizeSentiment( user_sentiments, month, attributes, sentiment_svg, sentiment_x_scale, sentiment_y_scale );
-                } );
+                .text( d => formatMonths( d ) );
 
             // Show the current month as active
-            /*d3.select( '#months' )
+            d3.select( '#months' )
                 .selectAll( '.month' )
                 .classed( 'active', false );
             d3.selectAll( '.' + month )
@@ -458,7 +420,7 @@
                         .classed( 'active', true );
                     visualizeTopics( monthly_topics, month, attributes, topics_svg, y_scale );
                     visualizeSentiment( user_sentiments, month, attributes, sentiment_svg, sentiment_x_scale, sentiment_y_scale );
-                } );*/
+                } );
         }
     }
 </script>
