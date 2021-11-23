@@ -55,17 +55,12 @@
 
             </div>
         </div>
-        <div class="eight columns">
+        <div class="twelve columns">
             <div id="months">
 
             </div>
             <div id="selected-month" class="selected-month">
                 <span id="selected-month-label"></span>
-            </div>
-        </div>
-        <div class="three columns">
-            <div id="users">
-
             </div>
         </div>
         <div class="twelve columns">
@@ -95,13 +90,13 @@
                     Add tooltip to the visualizations.
                 </li>
                 <li>
-                    <strike>Make the topic bubbles selectable.</strike>
+                    Make the topic bubbles selectable.
                 </li>
                 <li>
                     Make the sentiment bubbles selectable to show only one user.
                 </li>
                 <li>
-                    <strike>Show the legends on sentiment visualization.</strike>
+                    Show the legends on sentiment visualization.
                 </li>
             </ul>
         </div>
@@ -131,7 +126,6 @@
             </ul>
             <h4>Previous updates</h4>
             <ul>
-                <li><a href="update-4.html" target="_blank">11/11/2021</a></li>
                 <li><a href="update-3.html" target="_blank">11/02/2021</a></li>
                 <li><a href="update-2.html" target="_blank">10/14/2021</a></li>
                 <li><a href="update-1.html" target="_blank">10/04/2021</a></li>
@@ -146,15 +140,12 @@
                 <small>
                     Information visualization project progress of Ashiqur Rahman.<br/>
                     Email: ashiqur.r@niu.edu<br/>
-                    Last update: 11/23/2021
+                    Last update: 11/11/2021
                 </small>
             </p>
         </div>
     </div>
 </div>
-<!-- jQuery -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"
-        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
 <!-- Loading D3
     -------------------------------------------------- -->
 <script type="module">
@@ -259,42 +250,12 @@
         sentiment_svg.selectAll( '.bubble' )
             .data( user_sentiments )
             .join( 'circle' )
-            .attr( 'class', d => 'bubble bubble-' + d.user_screen_name.toLowerCase().replace( /[.\s]+/g, '-' ) )
-            .attr( 'data-user', d => d.user_screen_name.toLowerCase().replace( /[.\s]+/g, '-' ) )
-            .attr( 'data-score', d => d.cumulative_sentiment )
-            .on( 'mouseover', handleMouseOverBubble )
-            .on( 'mouseout', handleMouseOutBubble )
-            .on( 'click', handleMouseClickBubble )
             .transition( t )
+            .attr( 'class', d => 'bubble bubble-' + d.user_screen_name.toLowerCase().replace( /[.\s]+/g, '-' ) )
             .attr( 'cx', d => x_scale( d.month ) )
             .attr( 'cy', d => y_scale( d.cumulative_sentiment ) )
             .attr( 'r', 5 )
-            .style( 'fill', d => sentiment_color( d ) );
-    }
-
-    function handleMouseOverBubble( d, i ) {
-        const sentiment_svg = d3.select( '#topic-visualization' ).select( 'svg' );
-        console.log( sentiment_svg );
-
-        sentiment_svg.append( "text" )
-            .text( 'Sentiment score: ' + i.cumulative_sentiment )
-            .attr( {
-                id: "t" + d.x + "-" + d.y + "-" + i.user_screen_name,
-                x: function () {
-                    return d.x - 30;
-                },
-                y: function () {
-                    return d.y - 15;
-                }
-            } );
-    }
-
-    function handleMouseOutBubble( d, i ) {
-        d3.select( "#t" + d.x + "-" + d.y + "-" + i.user_screen_name ).remove()
-    }
-
-    function handleMouseClickBubble( d, i ) {
-
+            .style( 'fill', d => sentiment_color( d ) )
     }
 
     /**
@@ -387,12 +348,7 @@
 
         visualizeTopics( monthly_topics, month, attributes, topics_svg, y_scale );
 
-        // Visualize sentiment
-
-        // Get the unique dates from the monthly topics object
-        const unique_users = [...new Set( user_sentiments.map( d => d.user_screen_name ) )];
-
-        // Sentiment SVG
+        // Sentiment placeholder
         const sentiment_svg = d3.selectAll( '#sentiment-visualization' )
             .append( 'svg' )
             .attr( 'width', attributes.width )
@@ -420,6 +376,7 @@
             .attr( 'transform', 'rotate(270)' )
             .style( 'text-anchor', 'end' );
 
+        console.log( d3.extent( user_sentiments.map( d => parseFloat( d.cumulative_sentiment ) ) ) );
         // Y axis
         const sentiment_y_scale = d3.scaleLinear()
             .range( [attributes.margin.top, attributes.height - attributes.margin.top - attributes.margin.bottom - attributes.axis.x] )
@@ -439,6 +396,15 @@
 
         // Show the months on the screen
         {
+            /*d3.select( '#months' )
+                .append( 'div' )
+                .attr( 'class', 'month-controls' )
+                .selectAll( '.month' )
+                .data( dates )
+                .join( 'span' )
+                .attr( 'class', d => 'month ' + formatMonths( d ).toLowerCase().replaceAll( ' ', '-' ) )
+                .attr( 'data-month', d => formatMonths( d ).toLowerCase().replaceAll( ' ', '-' ) )
+                .text( d => formatMonths( d ) );*/
             d3.select( '#months' )
                 .append( 'input' )
                 .attr( 'type', 'range' )
@@ -457,12 +423,12 @@
                     const selected_value = this.value;
                     const min = this.min ? this.min : 0;
                     const max = this.max ? this.max : dates.length - 1;
-                    const new_value = Number( ((selected_value - min) * 100) / (max - min) );
+                    const new_value = Number(((selected_value - min) * 100) / (max - min));
 
                     const current_month = dates[selected_value];
                     d3.select( '#selected-month-label' )
                         .text( formatMonths( current_month ) )
-                        .style( 'left', `calc(${new_value}%)` );
+                        .style('left', `calc(${new_value}%)`);
 
 
                     // Sorta magic numbers based on size of the native UI thumb
@@ -473,46 +439,26 @@
                     visualizeTopics( monthly_topics, month, attributes, topics_svg, y_scale );
                     visualizeSentiment( user_sentiments, month, attributes, sentiment_svg, sentiment_x_scale, sentiment_y_scale );
                 } );
-        }
 
-        //Show the users in dropdown
-        {
-            const user_filter_select = d3.select( '#users' )
-                .append( 'select' )
-                .attr( 'id', 'user-filter' )
-                .attr( 'class', 'user-filter' );
+            // Show the current month as active
+            /*d3.select( '#months' )
+                .selectAll( '.month' )
+                .classed( 'active', false );
+            d3.selectAll( '.' + month )
+                .classed( 'active', true );
 
-            user_filter_select.append( 'option' )
-                .attr( 'value', '' )
-                .attr( 'selected', 'selected' )
-                .text( 'All' );
-
-            unique_users.forEach( user => {
-                user_filter_select.append( 'option' )
-                    .attr( 'value', user.toLowerCase().replace( /[.\s]+/g, '-' ) )
-                    .text( user );
-            } );
-
-            const sentiment_svg_backup = sentiment_svg;
-
-            user_filter_select.on( 'change', ( d ) => {
-                let selected_user = d3.select( d.target ).property( 'value' ).toLowerCase().replace( /[.\s]+/g, '-' );
-
-                if ( selected_user !== 'all' ) {
-
-                    sentiment_svg.selectAll( '.bubble' )
-                        .style( 'fill', '#eaeaea' )
-                        .style( 'opacity', 0.3 )
-                        .style( 'z-index', 1 );
-                    sentiment_svg.selectAll( '.bubble-' + selected_user )
-                        .style( 'fill', '#993333' )
-                        .style( 'opacity', 1 )
-                        .style( 'z-index', 99 );
-                } else {
-                    sentiment_svg.innerHTML = sentiment_svg_backup.innerHTML;
-                    d3.selectAll( 'input#month-range' ).node().dispatch( 'change' );
-                }
-            } );
+            // Click event
+            d3.select( '#months' )
+                .selectAll( '.month' )
+                .on( 'click', function () {
+                    month = d3.select( this ).attr( 'data-month' );
+                    d3.selectAll( '.month' )
+                        .classed( 'active', false );
+                    d3.selectAll( '.' + month )
+                        .classed( 'active', true );
+                    visualizeTopics( monthly_topics, month, attributes, topics_svg, y_scale );
+                    visualizeSentiment( user_sentiments, month, attributes, sentiment_svg, sentiment_x_scale, sentiment_y_scale );
+                } );*/
         }
     }
 </script>
