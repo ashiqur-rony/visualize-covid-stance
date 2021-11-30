@@ -2,6 +2,10 @@
  * Styles for the month controls
  */
 
+svg {
+  font-family: "Raleway", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
 .month-controls {
   display: flex;
   align-items: flex-start;
@@ -35,5 +39,22 @@
     fill: #aeaeae;
     z-index: 0;
     opacity: 0.1;
+  }
+}
+
+.sentiment-tooltip {
+  fill: #2c3e50;
+  font-size: 12px;
+
+  text {
+    tspan {
+      &:first-child {
+        font-weight: bold;
+      }
+
+      &.tweet-text {
+        font-style: italic;
+      }
+    }
   }
 }
