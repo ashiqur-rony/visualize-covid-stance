@@ -58,3 +58,15 @@ svg {
     }
   }
 }
+
+#topic-visualization {
+  svg {
+    g {
+      &.axis {
+        &.x {
+          font-size: 13px;
+        }
+      }
+    }
+  }
+}

@@ -110,13 +110,15 @@ svg {
   .sentiment-tooltip text tspan.tweet-text {
     font-style: italic; }
 
+#topic-visualization svg g.axis.x {
+  font-size: 13px; }
+
 /**
  * Style for control elements
  */
 .month-range {
   width: 100%;
   -webkit-appearance: none;
-  width: calc(100% - (73px));
   height: 10px;
   border-radius: 5px;
   background: #d7dcdf;
