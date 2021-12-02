@@ -119,11 +119,11 @@ function visualizeSentiment( user_sentiments, month, attributes, sentiment_svg, 
         .on( 'mouseover', handleMouseOverBubble )
         .on( 'mouseout', handleMouseOutBubble )
         .on( 'click', handleMouseClickBubble )
-        .transition( t )
         .attr( 'cx', d => x_scale( d.month ) )
         .attr( 'cy', d => y_scale( d.cumulative_sentiment ) )
         .attr( 'r', 5 )
-        .style( 'fill', d => sentiment_color( d ) );
+        .style( 'fill', d => sentiment_color( d ) )
+        .transition( t );
 }
 
 function handleMouseOverBubble( d, i ) {
@@ -382,6 +382,10 @@ function createVisualization( data ) {
                     .style( 'z-index', 99 )
                     .raise();
             } else {
+                sentiment_svg.selectAll( '.bubble' )
+                    .style( 'fill', '#eaeaea' )
+                    .style( 'opacity', 0.3 )
+                    .style( 'z-index', 1 );
                 redrawViz();
             }
         } );
