@@ -107,6 +107,9 @@ svg {
   font-size: 12px; }
   .sentiment-tooltip text tspan:first-child {
     font-weight: bold; }
+  .sentiment-tooltip text tspan.other-topics {
+    opacity: 0.5;
+    font-style: italic; }
   .sentiment-tooltip text tspan.tweet-text {
     font-style: italic; }
 

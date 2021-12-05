@@ -66,8 +66,11 @@ function visualizeTopics( monthly_topics, month, attributes, topics_svg, y_scale
     topics_svg.selectAll( '.bubble' )
         .data( grouped_topics.keys() )
         .join( 'circle' )
-        .transition( t )
         .attr( 'class', d => 'bubble bubble-' + d.toLowerCase().replace( /[.\s]+/g, '-' ) )
+        .attr( 'data-topic', d => d.toLowerCase().replace( /[.\s]+/g, '-' ) )
+        .on( 'mouseover', handleMouseOverTopicBubble )
+        .on( 'mouseout', handleMouseOutTopicBubble )
+        .transition( t )
         .attr( 'cx', d => x_scale( d ) )
         .attr( 'cy', d => y_scale( grouped_topics.get( d ) ) )
         .attr( 'r', d => Math.ceil( grouped_topics_count.get( d ) / 5 ) )
@@ -126,10 +129,38 @@ function visualizeSentiment( user_sentiments, month, attributes, sentiment_svg, 
         .transition( t );
 }
 
+function handleMouseOverTopicBubble( d, i ) {
+    const sentiment_svg = d3.select( '#sentiment-visualization' ).select( 'svg' );
+    sentiment_svg.selectAll( '.bubble' )
+        .style( 'opacity', 0 )
+        .style( 'z-index', 1 );
+    sentiment_svg.selectAll( '.bubble.' + i )
+        .style( 'opacity', 1 )
+        .style( 'z-index', 99 )
+        .raise();
+
+    const topic_svg = d3.select( '#topic-visualization' ).select( 'svg' );
+    topic_svg.selectAll( 'circle:not(.bubble-' + i )
+        .style( 'opacity', 0.2 )
+        .style( 'z-index', 1 )
+        .raise();
+}
+
+function handleMouseOutTopicBubble( d, i ) {
+    const sentiment_svg = d3.select( '#sentiment-visualization' ).select( 'svg' );
+    sentiment_svg.selectAll( '.bubble' )
+        .style( 'opacity', 1 )
+        .style( 'z-index', 99 );
+    const topic_svg = d3.select( '#topic-visualization' ).select( 'svg' );
+    topic_svg.selectAll( 'circle.bubble' )
+        .style( 'opacity', 1 )
+        .style( 'z-index', 99 );
+}
+
 function handleMouseOverBubble( d, i ) {
     const sentiment_svg = d3.select( '#sentiment-visualization' ).select( 'svg' );
     const tweet_texts = i.text.replaceAll( /@\w+/ig, '@<user>' ).replaceAll( /RT@\w+:/ig, '' ).match( /.{1,120}/g );
-    const topics = i.topic.replaceAll( '[', '' ).replaceAll( ']', '' ).split( '\' \'' );
+    const topics = i.topic.replaceAll( '[', '' ).replaceAll( ']', '' ).replaceAll('\'', '').split( ' ' );
 
     const text_node = sentiment_svg
         .append( 'g' )
@@ -146,7 +177,17 @@ function handleMouseOverBubble( d, i ) {
     text_node.append( 'tspan' )
         .attr( 'x', 120 )
         .attr( 'dy', '1.2em' )
-        .text( 'Topic: ' + (topics.length > 0 ? topics[0].replaceAll( '\'', '' ).trim() : 'NA') );
+        .text( 'Primary topic: ' + (topics.length > 0 ? topics[0].replaceAll( '\'', '' ).trim() : 'NA') );
+
+    if(topics.length > 1) {
+        topics.splice(0, 1);
+        text_node.append( 'tspan' )
+            .attr( 'x', 120 )
+            .attr( 'dy', '1.2em' )
+            .attr( 'class', 'other-topics' )
+            .text( 'Other topics: ' + topics.join(', ') );
+    }
+
     tweet_texts.forEach( ( text ) => {
         text_node.append( 'tspan' )
             .attr( 'x', 120 )
