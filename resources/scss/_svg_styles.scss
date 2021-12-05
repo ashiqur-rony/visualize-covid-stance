@@ -52,6 +52,11 @@ svg {
         font-weight: bold;
       }
 
+      &.other-topics {
+        opacity: 0.5;
+        font-style: italic;
+      }
+
       &.tweet-text {
         font-style: italic;
       }
