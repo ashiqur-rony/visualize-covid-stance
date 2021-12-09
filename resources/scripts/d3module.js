@@ -121,7 +121,6 @@ function visualizeSentiment( user_sentiments, month, attributes, sentiment_svg, 
         .attr( 'data-score', d => d.cumulative_sentiment )
         .on( 'mouseover', handleMouseOverBubble )
         .on( 'mouseout', handleMouseOutBubble )
-        .on( 'click', handleMouseClickBubble )
         .attr( 'cx', d => x_scale( d.month ) )
         .attr( 'cy', d => y_scale( d.cumulative_sentiment ) )
         .attr( 'r', 5 )
@@ -163,7 +162,7 @@ function handleMouseOverBubble( d, i ) {
     const topics = i.topic.replaceAll( '[', '' ).replaceAll( ']', '' ).replaceAll('\'', '').split( ' ' );
 
     d3.selectAll('.bubble')
-        .style('opacity', 0.5);
+        .style('opacity', 0.3);
 
     d3.select(d.target)
         .style('opacity', 1)
@@ -230,10 +229,6 @@ function handleMouseOutBubble( d, i ) {
     topic_svg.selectAll( 'circle.bubble' )
         .style( 'opacity', 1 )
         .style( 'z-index', 99 );
-}
-
-function handleMouseClickBubble( d, i ) {
-
 }
 
 /**
@@ -397,6 +392,7 @@ function createVisualization( data ) {
 
         d3.select( 'input#month-range' )
             .on( 'change', function () {
+                resetSentimentViz();
                 redrawViz( );
             } );
     }
@@ -419,31 +415,30 @@ function createVisualization( data ) {
                 .text( user );
         } );
 
-        const sentiment_svg_backup = sentiment_svg;
-
         user_filter_select.on( 'change', ( d ) => {
             let selected_user = d3.select( d.target ).property( 'value' ).toLowerCase().replace( /[.\s]+/g, '-' );
 
             if ( selected_user !== 'all' ) {
 
-                sentiment_svg.selectAll( '.bubble' )
-                    .style( 'fill', '#eaeaea' )
-                    .style( 'opacity', 0.3 )
-                    .style( 'z-index', 1 );
+                resetSentimentViz();
                 sentiment_svg.selectAll( '.bubble-' + selected_user )
                     .style( 'fill', '#993333' )
                     .style( 'opacity', 1 )
                     .style( 'z-index', 99 )
                     .raise();
             } else {
-                sentiment_svg.selectAll( '.bubble' )
-                    .style( 'fill', '#eaeaea' )
-                    .style( 'opacity', 0.3 )
-                    .style( 'z-index', 1 );
+                resetSentimentViz();
                 redrawViz();
             }
         } );
     }
+}
+
+function resetSentimentViz() {
+    sentiment_svg.selectAll( '.bubble' )
+        .style( 'fill', '#eaeaea' )
+        .style( 'opacity', 0.3 )
+        .style( 'z-index', 1 );
 }
 
 function redrawViz( ) {
