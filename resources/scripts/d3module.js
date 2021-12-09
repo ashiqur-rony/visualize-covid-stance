@@ -162,6 +162,15 @@ function handleMouseOverBubble( d, i ) {
     const tweet_texts = i.text.replaceAll( /@\w+/ig, '@<user>' ).replaceAll( /RT@\w+:/ig, '' ).match( /.{1,120}/g );
     const topics = i.topic.replaceAll( '[', '' ).replaceAll( ']', '' ).replaceAll('\'', '').split( ' ' );
 
+    d3.selectAll('.bubble')
+        .style('opacity', 0.5);
+
+    d3.select(d.target)
+        .style('opacity', 1)
+        .style('stroke-width', '1px')
+        .style('stroke', 'black')
+        .raise();
+
     const text_node = sentiment_svg
         .append( 'g' )
         .attr( 'id', 't' + Date.parse( i.created_at ) + '-' + i.user_screen_name )
@@ -212,6 +221,10 @@ function handleMouseOverBubble( d, i ) {
 function handleMouseOutBubble( d, i ) {
     const sentiment_svg = d3.select( '#sentiment-visualization' ).select( 'svg' );
     sentiment_svg.select( "#t" + Date.parse( i.created_at ) + "-" + i.user_screen_name ).remove();
+    sentiment_svg.selectAll('.bubble')
+        .style('opacity', 1)
+        .style('stroke-width', '0px')
+        .style('stroke', 'none');
 
     const topic_svg = d3.select( '#topic-visualization' ).select( 'svg' );
     topic_svg.selectAll( 'circle.bubble' )
