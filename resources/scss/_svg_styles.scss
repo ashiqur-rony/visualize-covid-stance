@@ -70,6 +70,12 @@ svg {
       &.axis {
         &.x {
           font-size: 12px;
+
+          .tick {
+            text {
+              transform: rotate(-65deg);
+            }
+          }
         }
       }
     }
