@@ -4,3 +4,12 @@ Vaccine hesitancy is one of the significant obstacles to eradicating the COVID-1
 
 ## Data
 The data contains two CSV files with tweet texts, vaccine stance, cumulative score for vaccine stance, location, and topic information.
+
+## Paper
+Related paper for this work is available [here](https://ashiqur-rony.github.io/visualize-covid-stance/docs/Visualizing%20Relation%20Between%20(De)Motivating%20Topics%20and%20Public%20Stance%20toward%20COVID-19%20Vaccine.pdf).
+
+## Citation
+If you use this work, please cite the following paper:
+```
+Ashiqur Rahman and Hamed Alhoori. 2023. Visualizing Relation Between (De)Motivating Topics and Public Stance toward COVID-19 Vaccine. In Proceedings of 2023 ACM/IEEE Joint Conference on Digital Libraries (JCDL). DOI:https://doi.org/10.1109/JCDL57899.2023.00067
+```
