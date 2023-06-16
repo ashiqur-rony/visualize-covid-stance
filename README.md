@@ -11,5 +11,8 @@ Related paper for this work is available [here](https://github.com/ashiqur-rony/
 ## Citation
 If you use this work, please cite the following paper:
 ```
-Ashiqur Rahman and Hamed Alhoori. 2023. Visualizing Relation Between (De)Motivating Topics and Public Stance toward COVID-19 Vaccine. In Proceedings of 2023 ACM/IEEE Joint Conference on Digital Libraries (JCDL). DOI:https://doi.org/10.1109/JCDL57899.2023.00067
+Ashiqur Rahman and Hamed Alhoori. 2023. 
+Visualizing Relation Between (De)Motivating Topics and Public Stance toward COVID-19 Vaccine. 
+In Proceedings of 2023 ACM/IEEE Joint Conference on Digital Libraries (JCDL). 
+DOI:https://doi.org/10.1109/JCDL57899.2023.00067
 ```
