@@ -1,10 +1,10 @@
+/**
+ * @author: Ashiqur Rahman
+ * @url: https://github.com/ashiqur-rony/visualize-covid-stance
+ **/
 import * as d3 from "https://cdn.skypack.dev/d3@7";
 
 window.onload = function () {
-    // Promise.all([d3.csv("resources/data/monthly_topics.csv"),
-    //     d3.csv("resources/data/user_cumulative_score.csv")])
-    //     .then(createVisualization);
-
     load_data();
 };
 
