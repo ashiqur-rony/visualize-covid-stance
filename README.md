@@ -9,10 +9,9 @@ The data contains CSV files with anonymized user names, tweet texts, vaccine sta
 The related paper for this work is available [here](https://arxiv.org/abs/2306.12118).
 
 ## Citation
-If you use this work, please cite the following paper:
 ```
-Ashiqur Rahman and Hamed Alhoori. 2023. 
-Visualizing Relation Between (De)Motivating Topics and Public Stance toward COVID-19 Vaccine. 
-In Proceedings of 2023 ACM/IEEE Joint Conference on Digital Libraries (JCDL). 
-DOI:https://doi.org/10.1109/JCDL57899.2023.00067
+Ashiqur Rahman and Hamed Alhoori. 2023.
+Visualizing Relation Between (De)Motivating Topics and Public Stance toward COVID-19 Vaccine.
+arXiv [cs.CY]. Retrieved from http://arxiv.org/abs/2306.12118
+DOI: https://doi.org/10.48550/arXiv.2306.12118
 ```
